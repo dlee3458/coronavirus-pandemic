@@ -1,0 +1,309 @@
+{% extends 'news/base.html' %}
+{% load humanize %}
+{% load tz %}
+
+{% block content %}
+    <div class="content">
+        <div class="total-confirmed">
+            <p id="tc-p1">Total Confirmed</p>
+            {% for stat in stats %}
+                <h1 id="tc-h">{{ stat.total_confirmed|intcomma }}</h1>
+                <p id="tc-p2">+{{ stat.new_confirmed|intcomma }} ({{ stat.confirmed_percentage }}%)</p>
+            {% endfor %}
+        </div>
+        <div class="total-confirmed-stats">
+            <div class="total-confirmed-label">
+                <p id="tcl-p1">Confirmed Cases by</p>
+                <p id="tcl-p2">Country/Region/Sovereignty</p>
+            </div>
+            <div class="total-confirmed-table" id="tct">
+                <div class="container">
+                    <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search..">
+                    <ul id="myUL">
+                        {% for country in countries %}
+                            <li>
+                                <hr style="border-bottom: 2px solid #46526f; margin: 0;">
+                                <button type="button" class="collapsible"><img src="{{ country.flag.flag }}" style="width: 20px; height: 15px;" alt=""><span id="myUL-s1"> {{ country.confirmed_count|intcomma }}</span><span id="myUL-s2"> {{ country.name }}</span></button>
+                                <div class="contents">
+                                    <p>Total Confirmed <br><span class="confirmed" style="color: #f4c430;">{{ country.confirmed_count|intcomma }}
+                                        <br>+{{ country.new_confirmed|intcomma }} ({{ country.confirmed_percentage }}%)</span><br><br>Total Recovered<br><span class="recovered" style="color: #228b22;">{{ country.recovered_count|intcomma }}<br>+{{ country.new_recovered|intcomma }} ({{ country.recovered_percentage }}%)</span>
+                                        <br><br>Total Deaths<br><span class="deaths" style="color: #cf352e;">{{ country.death_count|intcomma }}<br>+{{ country.new_death|intcomma }} ({{ country.death_percentage }}%)</span>
+                                    </p>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="trending-news">
+            <div class="trending-news-label">
+                <p id="trending-p">Trending News</p>
+            </div>
+            <div class="trending-items">
+                {% for trend in trending %}
+                    <li style="margin-bottom: 4px;"><a href='{{ trend.link }}' target="_blank" id="trending-a">{{ trend.title }}</a></li>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="new-news">      
+            <div class="new-news-label">
+                <p id="new-p">Just In</p>
+            </div>
+            <div class="new-items">
+                {% for article in articles %}
+                    <li style="margin-bottom: 4px;"><a href='{{ article.link }}' target="_blank" id="new-a">{{ article.title }}</a></li>
+                {% endfor %}
+            </div>
+        </div>  
+        <div id="map">
+            <style>
+                #geocoder-container > div {
+                width: 50%;
+                margin-left: 25%;
+                }
+                .mapboxgl-popup {
+                    max-width: 400px;
+                    color: black;
+                    text-align: center;
+                }
+            </style>
+            <script>
+            mapboxgl.accessToken = 'pk.eyJ1IjoiZGxlZTM0NTgiLCJhIjoiY2thbm44bmdoMXJoMjMwcWhwYnl2b2tyeCJ9.A6LbEzv-FlxtLfgT0tY_9Q';
+            var map = new mapboxgl.Map({
+                container: 'map', 
+                style: 'mapbox://styles/dlee3458/ckcemvida0vgh1inu0aojzab0', 
+                center: [-95.7129, 37.1], 
+                zoom: 0.90 
+            });
+
+            map.on('load', function() {
+                map.addSource('infected', {
+                    'type': 'geojson',
+                    'data': 'worldstats.json/'
+                });
+            
+
+                map.addLayer({
+                    'id': 'infected',
+                    'type': 'circle',
+                    'source': 'infected',
+                    'paint': {
+                        'circle-radius': 7,
+                        'circle-color': 'red',
+                        // 'circle-stroke-color': 'red',
+                        // 'circle-stroke-width': 1,
+                        'circle-opacity': 0.6,
+                        // 'circle-blur': 1,
+                        // 'circle-pitch-scale': "map"
+                    }
+
+                });
+
+                var popup = new mapboxgl.Popup({
+                    closeButton: false,
+                    closeOnClick: false,
+                    offset : 0
+                });
+
+                map.on('mouseenter', 'infected', function(e) {
+                    // Change the cursor style as a UI indicator.
+                    map.getCanvas().style.cursor = 'pointer';
+                    
+                    var coordinates = e.features[0].geometry.coordinates.slice();
+                    var confirmed = e.features[0].properties.Confirmed;
+                    var deaths = e.features[0].properties.Deaths;
+                    var recovered = e.features[0].properties.Recovered;
+                    var state = e.features[0].properties.State;
+                
+                    // Ensure that if the map is zoomed out such that multiple
+                    // copies of the feature are visible, the popup appears
+                    // over the copy being pointed to.
+                    while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                        coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+                    }
+ 
+                    // Populate the popup and set its coordinates
+                    // based on the feature found.
+                    popup
+                        .setLngLat(coordinates)
+                        .setHTML('<p style="font-size: 24px">' + state + '</p><p style="font-size: 16px">Confirmed: ' +
+                                '<span style="color: #ffbf00; font-weight: 700">' + confirmed + '</span></p><p style="font-size: 16px">Recovered: ' + 
+                                '<span style="color: green; font-weight: 700">' + recovered + '</span></p><p style="font-size: 16px">Deaths: ' + 
+                                '<span style="color: red; font-weight: 700">' + deaths
+                        )
+                        .addTo(map);
+                });
+ 
+                map.on('mouseleave', 'infected', function() {
+                    map.getCanvas().style.cursor = '';
+                    popup.remove();
+                });
+            });
+
+            var geocoder = new MapboxGeocoder({
+                accessToken: mapboxgl.accessToken,
+                marker: {
+                    color: 'red'
+                },
+                mapboxgl: mapboxgl
+                });
+                
+                map.addControl(geocoder);
+            </script>
+        </div>
+        <div class="total-deaths">
+            <div class="total-deaths-label">
+                <p id="td-p1">Global Deaths</p>
+                {% for stat in stats %}
+                    <h1 id="td-h">{{ stat.total_death|intcomma }}</h1>
+                    <p id="td-p2">+{{ stat.new_death|intcomma }} ({{ stat.death_percentage }}%)</p>
+                {% endfor %}
+            </div>
+            <div class="total-deaths-stats">
+                <div class="container">
+                    <input type="text" id="myInputtwo" onkeyup="myFunctiontwo()" placeholder="Search..">
+                    <ul id="myULtwo">
+                        {% for country in countries %}
+                            <li>
+                                <hr style="border-bottom: 2px solid #46526f; margin: 0;">
+                                <button type="button" class="collapsible"><img src="{{ country.flag.flag }}" style="width: 20px; height: 15px;" alt=""><span style="color: #cf352e;"> {{ country.death_count|intcomma }}</span><span style="font-size: 0.9vw;"> {{ country.name }}</span></button>
+                                <div class="contents">
+                                    <p>Total Confirmed <br><span class="confirmed" style="color: #f4c430;">{{ country.confirmed_count|intcomma }}
+                                        <br>+{{ country.new_confirmed|intcomma }} ({{ country.confirmed_percentage }}%)</span><br><br>Total Recovered<br><span class="recovered" style="color: #228b22;">{{ country.recovered_count|intcomma }}<br>+{{ country.new_recovered|intcomma }} ({{ country.recovered_percentage }}%)</span>
+                                        <br><br>Total Deaths<br><span class="deaths" style="color: #cf352e;">{{ country.death_count|intcomma }}<br>+{{ country.new_death|intcomma }} ({{ country.death_percentage }}%)</span>
+                                    </p>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="total-recovered">
+            <div class="total-recovered-label">
+                <p id="tr-p1">Total Recovered</p>
+                {% for stat in stats %}
+                    <h1 id="tr-h">{{ stat.total_recovered|intcomma }}</h1>
+                    <p id="tr-p2">+{{ stat.new_recovered|intcomma }} ({{ stat.recovered_percentage }}%)</p>
+                {% endfor %}
+            </div>
+            <div class="total-recovered-stats">
+                <div class="container">
+                    <input type="text" id="myInputthree" onkeyup="myFunctionthree()" placeholder="Search..">
+                    <ul id="myULthree">
+                        {% for country in countries %}
+                            <li>
+                                <hr style="border-bottom: 2px solid #46526f; margin: 0;">
+                                <button type="button" class="collapsible"><img src="{{ country.flag.flag }}" style="width: 20px; height: 15px;" alt=""><span style="color: #228b22;"> {{ country.recovered_count|intcomma }}</span><span style="font-size: 0.9vw;"> {{ country.name }}</span></button>
+                                <div class="contents">
+                                    <p>Total Confirmed <br><span class="confirmed" style="color: #f4c430;">{{ country.confirmed_count|intcomma }}
+                                        <br>+{{ country.new_confirmed|intcomma }} ({{ country.confirmed_percentage }}%)</span><br><br>Total Recovered<br><span class="recovered" style="color: #228b22;">{{ country.recovered_count|intcomma }}<br>+{{ country.new_recovered|intcomma }} ({{ country.recovered_percentage }}%)</span>
+                                        <br><br>Total Deaths<br><span class="deaths" style="color: #cf352e;">{{ country.death_count|intcomma }}<br>+{{ country.new_death|intcomma }} ({{ country.death_percentage }}%)</span>
+                                    </p>
+                                </div>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>  
+        </div>
+        <div class="unemployment">
+            <h2 id="unemployment-h2">US Unemployment Rate</h2>
+            {% for rate in rates %}
+                <h1 id="unemployment-h1">{{ rate.rate }}%</h1>
+            {% endfor %}
+        </div>
+        <div class="last-updated" style="color: #b8b8b8;">
+            <p id="updated-p">Last Updated at</p>
+            {% for stat in stats %}
+                {% timezone "US/Pacific" %}
+                    <h1 id="updated-h">{{ stat.last_updated|date:'n/j/Y, g:i:s A' }}</h1>
+                {% endtimezone %}
+            {% endfor %}
+        </div>
+        
+    </div>
+
+    <script type="text/javascript">
+        function myFunction() {
+            // Declare variables
+            var input, filter, ul, li, a, i, txtValue;
+            input = document.getElementById('myInput');
+            filter = input.value.toUpperCase();
+            ul = document.getElementById("myUL");
+            li = ul.getElementsByTagName('li');
+
+            // Loop through all list items, and hide those who don't match the search query
+            for (i = 0; i < li.length; i++) {
+                a = li[i].getElementsByTagName("button")[0];
+                txtValue = a.textContent || a.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    li[i].style.display = "";
+                } else {
+                    li[i].style.display = "none";
+                }
+            }
+        }
+    </script>
+
+    <script type="text/javascript">
+        function myFunctiontwo() {
+            // Declare variables
+            var input, filter, ul, li, a, i, txtValue;
+            input = document.getElementById('myInputtwo');
+            filter = input.value.toUpperCase();
+            ul = document.getElementById("myULtwo");
+            li = ul.getElementsByTagName('li');
+
+            // Loop through all list items, and hide those who don't match the search query
+            for (i = 0; i < li.length; i++) {
+                a = li[i].getElementsByTagName("button")[0];
+                txtValue = a.textContent || a.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    li[i].style.display = "";
+                } else {
+                    li[i].style.display = "none";
+                }
+            }
+        }
+    </script>
+
+    <script type="text/javascript">
+        function myFunctionthree() {
+            // Declare variables
+            var input, filter, ul, li, a, i, txtValue;
+            input = document.getElementById('myInputthree');
+            filter = input.value.toUpperCase();
+            ul = document.getElementById("myULthree");
+            li = ul.getElementsByTagName('li');
+
+            // Loop through all list items, and hide those who don't match the search query
+            for (i = 0; i < li.length; i++) {
+                a = li[i].getElementsByTagName("button")[0];
+                txtValue = a.textContent || a.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    li[i].style.display = "";
+                } else {
+                    li[i].style.display = "none";
+                }
+            }
+        }
+    </script>
+    <script>
+        var coll = document.getElementsByClassName("collapsible");
+        var i;
+        
+        for (i = 0; i < coll.length; i++) {
+          coll[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            var content = this.nextElementSibling;
+            if (content.style.display === "block") {
+              content.style.display = "none";
+            } else {
+              content.style.display = "block";
+            }
+          });
+        }
+    </script>
+    
+{% endblock content %}

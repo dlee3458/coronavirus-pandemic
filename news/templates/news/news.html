@@ -1,0 +1,55 @@
+{% extends 'news/base.html' %}
+
+{% block content %}
+    <!-- <h1>New</h1>
+    {% for article in articles %}
+        <article class="media content-section mb-3">
+            <div class="media-body">
+                <h4><a class="article-title" href="{{ article.link }}">{{ article.title }}</a></h4>
+                <p class="article-content" style="color: rgb(34, 110, 197); font-size: 14px;">{{ article.link }}</p>
+                <img class="article-img" src="{{ article.image }}" alt="">
+            </div>
+        </article>
+    {% endfor %} -->
+    <div class="news-content">
+        <div class="listings">
+            <h3 style="font-weight: 700; margin: 8px;">Trending</h3>
+            <!-- <hr style="border-bottom: 2px solid #404040; margin: 0;"> -->
+            <div class="items">
+                <hr style="border-bottom: 2px solid #404040; margin: 0;">
+                {% for trend in trending %}
+                    <a href="{{ trend.link }}"><img class="item-img" src="{{ trend.image }}" alt=""></a>
+                    <div style="margin-bottom: 16px;"><a href="{{ trend.link }}" style="margin-bottom: 16px;">{{ trend.title|slice:'0:110' }}...</a></div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="new">
+            <div class="articles1">
+                {% for article in articles %}
+                    <h4><a class="article-title" href="{{ article.link }}">{{ article.title }}</a></h4>
+                    <a href="{{ article.link }}"><img class="article-img" src="{{ article.image }}" alt=""></a>
+                    <hr style="border-bottom: 2px solid #404040; margin: 0; margin-bottom: 16px;">
+                {% endfor %}
+            </div>
+            <!-- <div class="articles1">
+                {% for article in articles|slice:'0:4' %}
+                    <h4><a class="article-title" href="{{ article.link }}">{{ article.title }}</a></h4>
+                    <img class="article-img" src="{{ article.image }}" alt="">  
+                {% endfor %}
+            </div>
+            <div class="articles2">
+                {% for article in articles|slice:'4:10' %}
+                    <img class="article2-img" src="{{ article.image }}" alt="">  
+                    <p style="font-weight: 700;"><a class="article-title" href="{{ article.link }}">{{ article.title }}</a></p>
+                {% endfor %}
+            </div>
+            <div class="articles2">
+                {% for article in articles|slice:'10:' %}
+                    <img class="article2-img" src="{{ article.image }}" alt="">  
+                    <p style="font-weight: 700;"><a class="article-title" href="{{ article.link }}">{{ article.title }}</a></p>
+                {% endfor %}
+            </div> -->
+        </div>
+    </div>
+{% endblock content %}
+
