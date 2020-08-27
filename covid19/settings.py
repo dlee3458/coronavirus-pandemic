@@ -25,12 +25,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # if os.path.isfile(dotenv_file):
 #     dotenv.load_dotenv(dotenv_file)
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '_0t)l$=1v!i!nr_z2iu$d0(k@@%(pvnk9q$jmkuua)cnt%zcvc'
+# SECRET_KEY = '_0t)l$=1v!i!nr_z2iu$d0(k@@%(pvnk9q$jmkuua)cnt%zcvc'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['coronaviruspandemic.herokuapp.com']
 
 
 # Application definition
