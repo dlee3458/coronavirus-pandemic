@@ -147,27 +147,27 @@ CELERY_TIMEZONE = 'US/Pacific'
 CELERY_BEAT_SCHEDULE = {
     'get-stats': {
         'task': 'stats',
-        'schedule': crontab(minute=35, hour=3),
+        'schedule': crontab(minute=26, hour=18),
     },
     'get-countries': {
         'task': 'countries',
-        'schedule': crontab(minute=35, hour=3),
+        'schedule': crontab(minute=26, hour=18),
     },
     'get-trending': {
         'task': 'trending',
-        'schedule': crontab(minute=35, hour=3),
+        'schedule': crontab(minute=26, hour=18),
     },
     'get-new': {
         'task': 'new',
-        'schedule': crontab(minute=35, hour=3),
+        'schedule': crontab(minute=26, hour=18),
     },
     'get-rate': {
         'task': 'rate',
-        'schedule': crontab(minute=35, hour=3)
+        'schedule': crontab(minute=26, hour=18)
     },
     'state-stats': {
         'task': 'states',
-        'schedule': crontab(minute=35, hour=3)
+        'schedule': crontab(minute=26, hour=18)
     }
 }
 
