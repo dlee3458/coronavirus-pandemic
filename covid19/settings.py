@@ -13,7 +13,9 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import os
 from celery.schedules import crontab
 import django_heroku
-# import dotenv
+import djcelery
+
+djcelery.setup_loader()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -31,6 +33,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = (os.environ.get('DEBUG_VALUE') == 'True')
+# DEBUG = 'True'
 
 ALLOWED_HOSTS = ['coronaviruspandemic.herokuapp.com']
 
@@ -50,6 +53,7 @@ INSTALLED_APPS = [
     'django_countries',
     'django_crontab',
     'django_celery_beat',
+    'djcelery'
 ]
 
 MIDDLEWARE = [
@@ -137,39 +141,43 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-CELERY_BROKER_URL = 'redis://localhost:6379'   
+BROKER_URL = os.environ.get("REDISCLOUD_URL", "django://")  
+
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 # If time zones are active (USE_TZ = True) define your local 
 CELERY_TIMEZONE = 'US/Pacific'
+CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 # We're going to have our tasks rolling soon, so that will be handy 
-CELERY_BEAT_SCHEDULE = {
-    'get-stats': {
-        'task': 'stats',
-        'schedule': crontab(minute=26, hour=18),
-    },
-    'get-countries': {
-        'task': 'countries',
-        'schedule': crontab(minute=26, hour=18),
-    },
-    'get-trending': {
-        'task': 'trending',
-        'schedule': crontab(minute=26, hour=18),
-    },
-    'get-new': {
-        'task': 'new',
-        'schedule': crontab(minute=26, hour=18),
-    },
-    'get-rate': {
-        'task': 'rate',
-        'schedule': crontab(minute=26, hour=18)
-    },
-    'state-stats': {
-        'task': 'states',
-        'schedule': crontab(minute=26, hour=18)
-    }
-}
+# CELERY_BEAT_SCHEDULE = {
+#     'get-stats': {
+#         'task': 'stats',
+#         'schedule': crontab(minute=28, hour=18),
+#     },
+#     'get-countries': {
+#         'task': 'countries',
+#         'schedule': crontab(minute=28, hour=18),
+#     },
+#     'get-trending': {
+#         'task': 'trending',
+#         'schedule': crontab(minute=28, hour=18),
+#     },
+#     'get-new': {
+#         'task': 'new',
+#         'schedule': crontab(minute=28, hour=18),
+#     },
+#     'get-rate': {
+#         'task': 'rate',
+#         'schedule': crontab(minute=28, hour=18)
+#     },
+#     'state-stats': {
+#         'task': 'states',
+#         'schedule': crontab(minute=28, hour=18)
+#     }
+# }
+if BROKER_URL == "django://":
+    INSTALLED_APPS += ("kombu.transport.django",)
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
