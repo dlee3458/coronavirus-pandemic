@@ -141,14 +141,12 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-BROKER_URL = os.environ.get("REDISCLOUD_URL", "django://")  
-
+CELERY_BROKER_URL = 'redis://localhost:6379'   
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 # If time zones are active (USE_TZ = True) define your local 
 CELERY_TIMEZONE = 'US/Pacific'
-CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 # We're going to have our tasks rolling soon, so that will be handy 
 # CELERY_BEAT_SCHEDULE = {
 #     'get-stats': {
@@ -176,8 +174,6 @@ CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 #         'schedule': crontab(minute=28, hour=18)
 #     }
 # }
-if BROKER_URL == "django://":
-    INSTALLED_APPS += ("kombu.transport.django",)
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
