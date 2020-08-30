@@ -1,5 +1,3 @@
-from __future__ import absolute_import, unicode_literals
-
 from stats.models import Record, Country, Unemployment
 from news.models import TrendingArticle, Article
 import requests
