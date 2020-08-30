@@ -148,32 +148,32 @@ CELERY_RESULT_SERIALIZER = 'json'
 # If time zones are active (USE_TZ = True) define your local 
 CELERY_TIMEZONE = 'US/Pacific'
 # We're going to have our tasks rolling soon, so that will be handy 
-# CELERY_BEAT_SCHEDULE = {
-#     'get-stats': {
-#         'task': 'stats',
-#         'schedule': crontab(minute=28, hour=18),
-#     },
-#     'get-countries': {
-#         'task': 'countries',
-#         'schedule': crontab(minute=28, hour=18),
-#     },
-#     'get-trending': {
-#         'task': 'trending',
-#         'schedule': crontab(minute=28, hour=18),
-#     },
-#     'get-new': {
-#         'task': 'new',
-#         'schedule': crontab(minute=28, hour=18),
-#     },
-#     'get-rate': {
-#         'task': 'rate',
-#         'schedule': crontab(minute=28, hour=18)
-#     },
-#     'state-stats': {
-#         'task': 'states',
-#         'schedule': crontab(minute=28, hour=18)
-#     }
-# }
+CELERY_BEAT_SCHEDULE = {
+    'get-stats': {
+        'task': 'stats',
+        'schedule': crontab(minute=28, hour=18),
+    },
+    'get-countries': {
+        'task': 'countries',
+        'schedule': crontab(minute=28, hour=18),
+    },
+    'get-trending': {
+        'task': 'trending',
+        'schedule': crontab(minute=28, hour=18),
+    },
+    'get-new': {
+        'task': 'new',
+        'schedule': crontab(minute=28, hour=18),
+    },
+    'get-rate': {
+        'task': 'rate',
+        'schedule': crontab(minute=28, hour=18)
+    },
+    'state-stats': {
+        'task': 'states',
+        'schedule': crontab(minute=28, hour=18)
+    }
+}
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
