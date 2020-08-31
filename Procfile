@@ -1,1 +1,1 @@
-web: gunicorn covid19.wsgi
+web: honcho start -f ProcfileHoncho
