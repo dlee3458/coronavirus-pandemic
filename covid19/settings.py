@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'django_countries',
     'django_crontab',
     'django_celery_beat',
+    'djcelery',
 ]
 
 MIDDLEWARE = [
