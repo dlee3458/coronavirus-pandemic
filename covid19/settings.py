@@ -13,9 +13,6 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import os
 from celery.schedules import crontab
 import django_heroku
-import djcelery
-
-djcelery.setup_loader()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -53,7 +50,6 @@ INSTALLED_APPS = [
     'django_countries',
     'django_crontab',
     'django_celery_beat',
-    'djcelery',
 ]
 
 MIDDLEWARE = [
@@ -141,50 +137,39 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-BROKER_URL = os.environ.get("REDISCLOUD_URL", "django://")
-BROKER_POOL_LIMIT = 1
-BROKER_CONNECTION_MAX_RETRIES = None
-
-CELERY_TASK_SERIALIZER = "json"
-CELERY_ACCEPT_CONTENT = ["json", "msgpack"]
-CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
-
-if BROKER_URL == "django://":
-    INSTALLED_APPS += ("kombu.transport.django",)
-
-# CELERY_BROKER_URL = 'redis://localhost:6379'   
-# CELERY_ACCEPT_CONTENT = ['application/json']
-# CELERY_TASK_SERIALIZER = 'json'
-# CELERY_RESULT_SERIALIZER = 'json'
+CELERY_BROKER_URL = 'redis://localhost:6379'   
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
 # If time zones are active (USE_TZ = True) define your local 
-# CELERY_TIMEZONE = 'US/Pacific'
+CELERY_TIMEZONE = 'US/Pacific'
 # We're going to have our tasks rolling soon, so that will be handy 
-# CELERY_BEAT_SCHEDULE = {
-#     'get-stats': {
-#         'task': 'stats',
-#         'schedule': crontab(minute=26, hour=5),
-#     },
-#     'get-countries': {
-#         'task': 'countries',
-#         'schedule': crontab(minute=26, hour=5),
-#     },
-#     'get-trending': {
-#         'task': 'trending',
-#         'schedule': crontab(minute=26, hour=5),
-#     },
-#     'get-new': {
-#         'task': 'new',
-#         'schedule': crontab(minute=26, hour=5),
-#     },
-#     'get-rate': {
-#         'task': 'rate',
-#         'schedule': crontab(minute=26, hour=5)
-#     },
-#     'state-stats': {
-#         'task': 'states',
-#         'schedule': crontab(minute=26, hour=5)
-#     }
-# }
+CELERY_BEAT_SCHEDULE = {
+    'get-stats': {
+        'task': 'stats',
+        'schedule': crontab(minute=26, hour=5),
+    },
+    'get-countries': {
+        'task': 'countries',
+        'schedule': crontab(minute=26, hour=5),
+    },
+    'get-trending': {
+        'task': 'trending',
+        'schedule': crontab(minute=26, hour=5),
+    },
+    'get-new': {
+        'task': 'new',
+        'schedule': crontab(minute=26, hour=5),
+    },
+    'get-rate': {
+        'task': 'rate',
+        'schedule': crontab(minute=26, hour=5)
+    },
+    'state-stats': {
+        'task': 'states',
+        'schedule': crontab(minute=26, hour=5)
+    }
+}
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
