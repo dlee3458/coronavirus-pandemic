@@ -8,9 +8,9 @@ from geopy.geocoders import MapBox
 import json
 from geojson import Point, Feature, FeatureCollection, dump
 from celery import task
-# from redis import Redis
-# from django_rq import job
-# import django_rq
+
+client_id = os.environ.get('client_id')
+client_secret = os.environ.get('client_secret')
 
 
 @task(name='stats')
@@ -192,8 +192,8 @@ def create_new(title, link):
 
 def get_reddit():
     return praw.Reddit(
-                        client_id=os.environ.get('client_id'),
-                        client_secret=os.environ.get('client_secret'),
+                        client_id=client_id,
+                        client_secret=client_secret,
                         grant_type='client_credentials',
                         user_agent='mytestscript/1.0'
            )
