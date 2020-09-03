@@ -1,12 +1,16 @@
 from django.shortcuts import render
 from django.views.generic import ListView
 from .models import Article, TrendingArticle
-import requests, json, geojson
+import requests
+import json
+import geojson
 from stats.models import Record, Country, Unemployment
 from django.http import JsonResponse
 
+
 def about(request):
     return render(request, 'news/about.html')
+
 
 def json_list(request):
     with open('covid19.json') as json_file:
@@ -30,11 +34,12 @@ class NewsListView(ListView):
         context['trending'] = TrendingArticle.objects.all()
         return context
 
+
 class HomeListView(ListView):
     model = Country
     template_name = 'news/home.html'
     context_object_name = 'countries'
-    
+
     def get_context_data(self, **kwargs):
         context = super(HomeListView, self).get_context_data(**kwargs)
         context['stats'] = Record.objects.all()

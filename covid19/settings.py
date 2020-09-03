@@ -141,9 +141,9 @@ CELERY_BROKER_URL = os.environ.get('REDISCLOUD_URL', 'redis://localhost:6379')
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
-# If time zones are active (USE_TZ = True) define your local 
+# If time zones are active (USE_TZ = True) define your local
 CELERY_TIMEZONE = 'US/Pacific'
-# We're going to have our tasks rolling soon, so that will be handy 
+# We're going to have our tasks rolling soon, so that will be handy
 CELERY_BEAT_SCHEDULE = {
     'get-stats': {
         'task': 'stats',

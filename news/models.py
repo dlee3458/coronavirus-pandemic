@@ -2,7 +2,8 @@ from django.db import models
 import praw
 import requests
 from newspaper import Article as art
-    
+
+
 class Article(models.Model):
     title = models.CharField(max_length=200)
     link = models.URLField()
@@ -11,6 +12,7 @@ class Article(models.Model):
     def __str__(self):
         return self.title
 
+
 class TrendingArticle(models.Model):
     title = models.CharField(max_length=200)
     link = models.URLField()
@@ -18,4 +20,3 @@ class TrendingArticle(models.Model):
 
     def __str__(self):
         return self.title
-
