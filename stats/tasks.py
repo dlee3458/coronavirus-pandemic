@@ -11,6 +11,7 @@ from celery import task
 
 client_id = os.environ.get('client_id')
 client_secret = os.environ.get('client_secret')
+mapbox_key = os.environ.get('mapbox_key')
 
 
 @task(name='stats')
@@ -216,7 +217,7 @@ def get_rate():
 
 @task(name='states')
 def state_stats():
-    geolocator = MapBox('pk.eyJ1IjoiZGxlZTM0NTgiLCJhIjoiY2thbm44bmdoMXJoMjMwcWhwYnl2b2tyeCJ9.A6LbEzv-FlxtLfgT0tY_9Q', user_agent='covid19')
+    geolocator = MapBox(mapbox_key, user_agent='covid19')
     country_r = requests.get("https://api-corona.azurewebsites.net/country").json()
     countries = []
     features = []
