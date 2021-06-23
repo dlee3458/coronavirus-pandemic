@@ -15,6 +15,9 @@ class Record(models.Model):
     death_percentage = models.DecimalField(max_digits=5, decimal_places=2)
     confirmed_percentage = models.DecimalField(max_digits=5, decimal_places=2)
     recovered_percentage = models.DecimalField(max_digits=5, decimal_places=2)
+    vaccination_count = models.BigIntegerField(default=0,null=True)
+    new_vaccination_count = models.BigIntegerField(default=0, null=True)
+    vaccination_percentage = models.DecimalField(max_digits=5, decimal_places=2, null=True)
 
 
 class Country(models.Model):
@@ -29,6 +32,9 @@ class Country(models.Model):
     confirmed_percentage = models.DecimalField(max_digits=5, decimal_places=2)
     recovered_percentage = models.DecimalField(max_digits=5, decimal_places=2)
     flag = CountryField()
+    vaccination_count = models.IntegerField(default=0, null=True)
+    new_vaccination_count = models.IntegerField(default=0, null=True)
+    vaccination_percentage = models.DecimalField(max_digits=5, decimal_places=2, null=True)
 
     def __str__(self):
         return self.name
@@ -39,3 +45,49 @@ class Country(models.Model):
 
 class Unemployment(models.Model):
     rate = models.CharField(max_length=200)
+
+
+class ChartConfirmedData(models.Model):
+    date = models.CharField(max_length=200)
+    total_confirmed = models.BigIntegerField()
+
+    def __str__(self):
+        return self.date
+
+class ChartDeathData(models.Model):
+    date = models.CharField(max_length=200)
+    total_death = models.BigIntegerField()
+
+    def __str__(self):
+        return self.date
+
+class ChartVaccinationData(models.Model):
+    date = models.CharField(max_length=200)
+    total_vaccination = models.BigIntegerField()
+
+    def __str__(self):
+        return self.date
+
+class HistoricalConfirmedData(models.Model):
+    country = models.CharField(max_length=200)
+    date = models.CharField(max_length=200)
+    total_confirmed = models.BigIntegerField()
+
+    def __str__(self):
+        return(self.country + ' ' + self.date)
+
+class HistoricalDeathData(models.Model):
+    country = models.CharField(max_length=200)
+    date = models.CharField(max_length=200)
+    total_death = models.BigIntegerField()
+
+    def __str__(self):
+        return(self.country + ' ' + self.date)
+
+class HistoricalVaccinationData(models.Model):
+    country = models.CharField(max_length=200)
+    date = models.CharField(max_length=200)
+    total_vaccination = models.BigIntegerField()
+
+    def __str__(self):
+        return(self.country + ' ' + self.date)

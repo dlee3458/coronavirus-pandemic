@@ -4,16 +4,17 @@
 
 {% block content %}
     <div class="content">
-        <div class="total-confirmed">
-            <p id="tc-p1">Total Confirmed</p>
+        <div class="last-updated" style="color: #b8b8b8;">
+            <p id="updated-p">Last Updated at</p>
             {% for stat in stats %}
-                <h1 id="tc-h">{{ stat.total_confirmed|intcomma }}</h1>
-                <p id="tc-p2">+{{ stat.new_confirmed|intcomma }} ({{ stat.confirmed_percentage }}%)</p>
+                {% timezone "US/Pacific" %}
+                    <h1 id="updated-h">{{ stat.last_updated|date:'n/j/Y, g:i:s A' }}</h1>
+                {% endtimezone %}
             {% endfor %}
         </div>
         <div class="total-confirmed-stats">
             <div class="total-confirmed-label">
-                <p id="tcl-p1">Confirmed Cases by</p>
+                <p id="tcl-p1"><span style="color: white; font-weight: 700;">Cases</span> and <span style="color:red; font-weight: 700;">Deaths</span> by</p>
                 <p id="tcl-p2">Country/Region/Sovereignty</p>
             </div>
             <div class="total-confirmed-table" id="tct">
@@ -21,18 +22,38 @@
                     <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search..">
                     <ul id="myUL">
                         {% for country in countries %}
-                            <li>
-                                <hr style="border-bottom: 2px solid #46526f; margin: 0;">
-                                <button type="button" class="collapsible"><img src="{{ country.flag.flag }}" style="width: 20px; height: 15px;" alt=""><span id="myUL-s1"> {{ country.confirmed_count|intcomma }}</span><span id="myUL-s2"> {{ country.name }}</span></button>
-                                <div class="contents">
-                                    <p>Total Confirmed <br><span class="confirmed" style="color: #f4c430;">{{ country.confirmed_count|intcomma }}
-                                        <br>+{{ country.new_confirmed|intcomma }} ({{ country.confirmed_percentage }}%)</span><br><br>Total Recovered<br><span class="recovered" style="color: #228b22;">{{ country.recovered_count|intcomma }}<br>+{{ country.new_recovered|intcomma }} ({{ country.recovered_percentage }}%)</span>
-                                        <br><br>Total Deaths<br><span class="deaths" style="color: #cf352e;">{{ country.death_count|intcomma }}<br>+{{ country.new_death|intcomma }} ({{ country.death_percentage }}%)</span>
-                                    </p>
-                                </div>
+                            <li style="position:relative">
+                                <hr style="border-bottom: 1px solid rgb(121, 121, 121); margin: 0;">
+                                <div class="selected-tab" id="selected-{{ country.id }}"></div>
+                                <button type="button" class="collapsible" id="{{ country.id }}" value="{{ country.name }}"><img src="{{ country.flag.flag }}" style="width: 20px; height: 15px;" alt=""><span id="myUL-s2"> {{ country.name }}</span><br><span id="myUL-s1">{{ country.confirmed_count|intcomma }} | <span style="color: red">{{ country.death_count|intcomma }}</span></span></button>
                             </li>
                         {% endfor %}
                     </ul>
+                </div>
+            </div>
+        </div>
+        <div class="ajaxify-stats">
+            <div class="middle-column">
+                <div class="total-confirmed">
+                    <p id="tc-p1">Cases</p>
+                    {% for stat in stats %}
+                        <h1 id="tc-h">{{ stat.total_confirmed|intcomma }}</h1>
+                        <p id="tc-p2">+{{ stat.new_confirmed|intcomma }} ({{ stat.confirmed_percentage }}%)</p>
+                    {% endfor %}
+                </div>
+                <div class="total-deaths">
+                    <p id="td-p1">Deaths</p>
+                    {% for stat in stats %}
+                        <h1 id="td-h">{{ stat.total_death|intcomma }}</h1>
+                        <p id="td-p2">+{{ stat.new_death|intcomma }} ({{ stat.death_percentage }}%)</p>
+                    {% endfor %}
+                </div>
+                <div class="total-vaccinations">
+                    <p id="tr-p1">Vaccine Doses Administered</p>
+                    {% for stat in stats %}
+                        <h1 id="tr-h">{{ stat.vaccination_count|intcomma }}</h1>
+                        <p id="tr-p2">+{{ stat.new_vaccination_count|intcomma }} ({{ stat.vaccination_percentage }}%)</p>
+                    {% endfor %}
                 </div>
             </div>
         </div>
@@ -46,16 +67,6 @@
                 {% endfor %}
             </div>
         </div>
-        <div class="new-news">      
-            <div class="new-news-label">
-                <p id="new-p">Just In</p>
-            </div>
-            <div class="new-items">
-                {% for article in articles %}
-                    <li style="margin-bottom: 4px;"><a href='{{ article.link }}' target="_blank" id="new-a">{{ article.title }}</a></li>
-                {% endfor %}
-            </div>
-        </div>  
         <div id="map">
             <style>
                 #geocoder-container > div {
@@ -72,9 +83,163 @@
             mapboxgl.accessToken = 'pk.eyJ1IjoiZGxlZTM0NTgiLCJhIjoiY2thbm44bmdoMXJoMjMwcWhwYnl2b2tyeCJ9.A6LbEzv-FlxtLfgT0tY_9Q';
             var map = new mapboxgl.Map({
                 container: 'map', 
-                style: 'mapbox://styles/dlee3458/ckcemvida0vgh1inu0aojzab0', 
+                style: 'mapbox://styles/dlee3458/ckpp6jb8u0ig517omh3mwxh6d', 
                 center: [-95.7129, 37.1], 
                 zoom: 0.90 
+            });
+
+            $('.collapsible').click(function() {
+                var country = $(this).attr('value');
+                var country_id = $(this).attr('id');
+                var url = 'https://api.mapbox.com/geocoding/v5/mapbox.places/country.json?access_token=pk.eyJ1IjoiZGxlZTM0NTgiLCJhIjoiY2thbm44bmdoMXJoMjMwcWhwYnl2b2tyeCJ9.A6LbEzv-FlxtLfgT0tY_9Q';
+                var country_url = url.replace('country', country)
+
+                // Undo previously selected country if present
+                let prev_country = sessionStorage.getItem('country');
+                let iteration = sessionStorage.getItem('iteration');
+                if (prev_country) {
+                    $('#selected-' + prev_country).css('display', 'none');
+
+                    if (prev_country == country_id && iteration != 0) {
+                        $.ajax({
+                            type: 'GET',
+                            url: '{% url "get-global-stats" %}',
+                            dataType: 'json',
+                            success: function(response){
+                                $(".ajaxify-stats").html(response['stats']);
+                                map.flyTo({
+                                    center: [-95.7129, 37.1], 
+                                    zoom: 0.90 
+                                });
+                                loadGlobalCharts();
+                                sessionStorage.setItem('iteration', 0);
+                            }
+                        })
+                    } else {
+                        $.ajax({
+                            type: 'GET',
+                            url: country_url,
+                            dataType: 'json',
+                            success: function(result){
+                                console.log(result)
+                                map.flyTo({
+                                    center: result.features[0].center,
+                                    zoom: 5,
+                                    essential: true
+                                });
+
+                                $.ajax({
+                                    type: "GET",
+                                    url: '{% url "get-country-stats" 999 %}'.replace(999, country_id),
+                                    success: function(response){
+                                        $('#selected-' + country_id).css('display', 'block');   // Show tab for selected country
+                                        $(".ajaxify-stats").html(response['stats']);
+                                        sessionStorage.setItem('iteration', 1);
+                                    }
+                                })
+                            },
+                            error: function(error){
+                                console.log('${error}')
+                            }
+                        });
+
+                        $.ajax({
+                            type: 'GET',
+                            url: '{% url "get-country-chart" 999 %}'.replace(999, country),
+                            dataType: 'json',
+                            success: (jsonResponse) => {
+                                $(".ajaxify-charts").html(jsonResponse.data.html);
+                                console.log(jsonResponse.data.confirmed_labels)
+                                console.log(jsonResponse.data.confirmed_data)
+                                let ctx_confirmed = document.getElementById("confirmed-chart").getContext("2d");
+                                let ctx_death = document.getElementById("death-chart").getContext("2d");
+                                let ctx_vaccination = document.getElementById("vaccination-chart").getContext("2d");
+                                let confirmed_chart = new Chart(ctx_confirmed, {
+                                    type: "bar",
+                                    data: {
+                                        labels: jsonResponse.data.confirmed_labels,
+                                        datasets: [
+                                            {
+                                            label: "",
+                                            backgroundColor: "#f4c430",
+                                            data: jsonResponse.data.confirmed_data,
+                                            pointRadius: 1,
+                                            }
+                                        ]
+                                    },
+                                    options: {
+                                        title: {
+                                            text: "Daily Cases",
+                                            display: true,
+                                            fontSize: 16,
+                                            position: "left",
+                                            fontColor: 'white',
+                                        },
+                                        legend: {
+                                            display: false,
+                                        },
+                                    }
+                                });
+                                let death_chart = new Chart(ctx_death, {
+                                    type: "bar",
+                                    data: {
+                                        labels: jsonResponse.data.death_labels,
+                                        datasets: [
+                                            {
+                                            label: "",
+                                            backgroundColor: "#ff4040",
+                                            data: jsonResponse.data.death_data,
+                                            pointRadius: 1,
+                                            }
+                                        ]
+                                    },
+                                    options: {
+                                        responsive: true,
+                                        title: {
+                                            text: "Daily Deaths",
+                                            display: true,
+                                            fontSize: 16,
+                                            position: "left",
+                                            fontColor: 'white',
+                                        },
+                                        legend: {
+                                            display: false,
+                                        },
+                                    }
+                                });
+                                let vaccination_chart = new Chart(ctx_vaccination, {
+                                    type: "bar",
+                                    data: {
+                                        labels: jsonResponse.data.vaccination_labels,
+                                        datasets: [
+                                            {
+                                            label: "",
+                                            backgroundColor: "#228B22",
+                                            data: jsonResponse.data.vaccination_data,
+                                            pointRadius: 1,
+                                            }
+                                        ]
+                                    },
+                                    options: {
+                                        responsive: true,
+                                        title: {
+                                            text: "Total Vaccinations",
+                                            display: true,
+                                            fontSize: 16,
+                                            position: "left",
+                                            fontColor: 'white',
+                                        },
+                                        legend: {
+                                            display: false,
+                                        },
+                                    }
+                                });
+                            }
+                        });
+                    }
+                }
+
+                sessionStorage.setItem('country', country_id);
             });
 
             map.on('load', function() {
@@ -89,13 +254,9 @@
                     'type': 'circle',
                     'source': 'infected',
                     'paint': {
-                        'circle-radius': 7,
-                        'circle-color': 'red',
-                        // 'circle-stroke-color': 'red',
-                        // 'circle-stroke-width': 1,
+                        'circle-radius': 5,
+                        'circle-color': 'skyblue',
                         'circle-opacity': 0.6,
-                        // 'circle-blur': 1,
-                        // 'circle-pitch-scale': "map"
                     }
 
                 });
@@ -103,7 +264,7 @@
                 var popup = new mapboxgl.Popup({
                     closeButton: false,
                     closeOnClick: false,
-                    offset : 0
+                    offset : 0,
                 });
 
                 map.on('mouseenter', 'infected', function(e) {
@@ -114,7 +275,7 @@
                     var confirmed = e.features[0].properties.Confirmed;
                     var deaths = e.features[0].properties.Deaths;
                     var recovered = e.features[0].properties.Recovered;
-                    var state = e.features[0].properties.State;
+                    var state = e.features[0].properties.Place;
                 
                     // Ensure that if the map is zoomed out such that multiple
                     // copies of the feature are visible, the popup appears
@@ -127,12 +288,13 @@
                     // based on the feature found.
                     popup
                         .setLngLat(coordinates)
-                        .setHTML('<p style="font-size: 24px">' + state + '</p><p style="font-size: 16px">Confirmed: ' +
-                                '<span style="color: #ffbf00; font-weight: 700">' + confirmed + '</span></p><p style="font-size: 16px">Recovered: ' + 
-                                '<span style="color: green; font-weight: 700">' + recovered + '</span></p><p style="font-size: 16px">Deaths: ' + 
+                        .setHTML('<p style="font-size: 24px; color: white;">' + state + '</p><p style="font-size: 16px; color: white;">Confirmed: ' +
+                                '<span style="color: #ffbf00; font-weight: 700">' + confirmed + '</span></p><p style="font-size: 16px; color: white;">Recovered: ' + 
+                                '<span style="color: green; font-weight: 700">' + recovered + '</span></p><p style="font-size: 16px; color: white;">Deaths: ' + 
                                 '<span style="color: red; font-weight: 700">' + deaths
                         )
-                        .addTo(map);
+                        .addTo(map)
+                        .addClassName('popup');
                 });
  
                 map.on('mouseleave', 'infected', function() {
@@ -150,79 +312,118 @@
                 });
                 
                 map.addControl(geocoder);
+
+                // Ajax function to load global charts
+                function loadGlobalCharts() {
+                    let ctx_confirmed = document.getElementById("confirmed-chart").getContext("2d");
+                    let ctx_death = document.getElementById("death-chart").getContext("2d");
+                    let ctx_vaccination = document.getElementById("vaccination-chart").getContext("2d");
+                    $.ajax({
+                        type: 'GET',
+                        url: '{% url "get-global-chart" %}',
+                        dataType: 'json',
+                        success: (jsonResponse) => {
+                            let confirmed_chart = new Chart(ctx_confirmed, {
+                                type: "bar",
+                                data: {
+                                    labels: jsonResponse.data.confirmed_labels,
+                                    datasets: [
+                                        {
+                                        label: "",
+                                        backgroundColor: "#f4c430",
+                                        data: jsonResponse.data.confirmed_data,
+                                        pointRadius: 1,
+                                        }
+                                    ]
+                                },
+                                options: {
+                                    title: {
+                                        text: "Daily Cases",
+                                        display: true,
+                                        fontSize: 16,
+                                        position: "left",
+                                        fontColor: 'white',
+                                    },
+                                    legend: {
+                                        display: false,
+                                    },
+                                }
+                            });
+                            let death_chart = new Chart(ctx_death, {
+                                type: "bar",
+                                data: {
+                                    labels: jsonResponse.data.death_labels,
+                                    datasets: [
+                                        {
+                                        label: "",
+                                        backgroundColor: "#ff4040",
+                                        data: jsonResponse.data.death_data,
+                                        pointRadius: 1,
+                                        }
+                                    ]
+                                },
+                                options: {
+                                    responsive: true,
+                                    title: {
+                                        text: "Daily Deaths",
+                                        display: true,
+                                        fontSize: 16,
+                                        position: "left",
+                                        fontColor: 'white',
+                                    },
+                                    legend: {
+                                        display: false,
+                                    },
+                                }
+                            });
+                            let vaccination_chart = new Chart(ctx_vaccination, {
+                                type: "bar",
+                                data: {
+                                    labels: jsonResponse.data.vaccination_labels,
+                                    datasets: [
+                                        {
+                                        label: "",
+                                        backgroundColor: "#228B22",
+                                        data: jsonResponse.data.vaccination_data,
+                                        pointRadius: 1,
+                                        }
+                                    ]
+                                },
+                                options: {
+                                    responsive: true,
+                                    title: {
+                                        text: "Total Vaccinations",
+                                        display: true,
+                                        fontSize: 16,
+                                        position: "left",
+                                        fontColor: 'white',
+                                    },
+                                    legend: {
+                                        display: false,
+                                    },
+                                }
+                            });
+                        }
+                    })
+                }
             </script>
         </div>
-        <div class="total-deaths">
-            <div class="total-deaths-label">
-                <p id="td-p1">Global Deaths</p>
-                {% for stat in stats %}
-                    <h1 id="td-h">{{ stat.total_death|intcomma }}</h1>
-                    <p id="td-p2">+{{ stat.new_death|intcomma }} ({{ stat.death_percentage }}%)</p>
-                {% endfor %}
+        <div class="ajaxify-charts">
+            <div class="charts-column">
+                <canvas id="confirmed-chart"></canvas>
+                <canvas id="death-chart"></canvas>
+                <canvas id="vaccination-chart"></canvas>
             </div>
-            <div class="total-deaths-stats">
-                <div class="container">
-                    <input type="text" id="myInputtwo" onkeyup="myFunctiontwo()" placeholder="Search..">
-                    <ul id="myULtwo">
-                        {% for country in countries %}
-                            <li>
-                                <hr style="border-bottom: 2px solid #46526f; margin: 0;">
-                                <button type="button" class="collapsible"><img src="{{ country.flag.flag }}" style="width: 20px; height: 15px;" alt=""><span style="color: #cf352e;"> {{ country.death_count|intcomma }}</span><span style="font-size: 0.9vw;"> {{ country.name }}</span></button>
-                                <div class="contents">
-                                    <p>Total Confirmed <br><span class="confirmed" style="color: #f4c430;">{{ country.confirmed_count|intcomma }}
-                                        <br>+{{ country.new_confirmed|intcomma }} ({{ country.confirmed_percentage }}%)</span><br><br>Total Recovered<br><span class="recovered" style="color: #228b22;">{{ country.recovered_count|intcomma }}<br>+{{ country.new_recovered|intcomma }} ({{ country.recovered_percentage }}%)</span>
-                                        <br><br>Total Deaths<br><span class="deaths" style="color: #cf352e;">{{ country.death_count|intcomma }}<br>+{{ country.new_death|intcomma }} ({{ country.death_percentage }}%)</span>
-                                    </p>
-                                </div>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <div class="total-recovered">
-            <div class="total-recovered-label">
-                <p id="tr-p1">Total Recovered</p>
-                {% for stat in stats %}
-                    <h1 id="tr-h">{{ stat.total_recovered|intcomma }}</h1>
-                    <p id="tr-p2">+{{ stat.new_recovered|intcomma }} ({{ stat.recovered_percentage }}%)</p>
-                {% endfor %}
-            </div>
-            <div class="total-recovered-stats">
-                <div class="container">
-                    <input type="text" id="myInputthree" onkeyup="myFunctionthree()" placeholder="Search..">
-                    <ul id="myULthree">
-                        {% for country in countries %}
-                            <li>
-                                <hr style="border-bottom: 2px solid #46526f; margin: 0;">
-                                <button type="button" class="collapsible"><img src="{{ country.flag.flag }}" style="width: 20px; height: 15px;" alt=""><span style="color: #228b22;"> {{ country.recovered_count|intcomma }}</span><span style="font-size: 0.9vw;"> {{ country.name }}</span></button>
-                                <div class="contents">
-                                    <p>Total Confirmed <br><span class="confirmed" style="color: #f4c430;">{{ country.confirmed_count|intcomma }}
-                                        <br>+{{ country.new_confirmed|intcomma }} ({{ country.confirmed_percentage }}%)</span><br><br>Total Recovered<br><span class="recovered" style="color: #228b22;">{{ country.recovered_count|intcomma }}<br>+{{ country.new_recovered|intcomma }} ({{ country.recovered_percentage }}%)</span>
-                                        <br><br>Total Deaths<br><span class="deaths" style="color: #cf352e;">{{ country.death_count|intcomma }}<br>+{{ country.new_death|intcomma }} ({{ country.death_percentage }}%)</span>
-                                    </p>
-                                </div>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </div>  
-        </div>
-        <div class="unemployment">
-            <h2 id="unemployment-h2">US Unemployment Rate</h2>
-            {% for rate in rates %}
-                <h1 id="unemployment-h1">{{ rate.rate }}%</h1>
-            {% endfor %}
-        </div>
-        <div class="last-updated" style="color: #b8b8b8;">
-            <p id="updated-p">Last Updated at</p>
-            {% for stat in stats %}
-                {% timezone "US/Pacific" %}
-                    <h1 id="updated-h">{{ stat.last_updated|date:'n/j/Y, g:i:s A' }}</h1>
-                {% endtimezone %}
-            {% endfor %}
         </div>
         
+        
     </div>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            loadGlobalCharts()
+        })
+    </script>
 
     <script type="text/javascript">
         function myFunction() {
@@ -289,21 +490,4 @@
             }
         }
     </script>
-    <script>
-        var coll = document.getElementsByClassName("collapsible");
-        var i;
-        
-        for (i = 0; i < coll.length; i++) {
-          coll[i].addEventListener("click", function() {
-            this.classList.toggle("active");
-            var content = this.nextElementSibling;
-            if (content.style.display === "block") {
-              content.style.display = "none";
-            } else {
-              content.style.display = "block";
-            }
-          });
-        }
-    </script>
-    
 {% endblock content %}

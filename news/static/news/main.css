@@ -3,7 +3,7 @@ html, body {
 }
 
 body {
-    background: #131b28;
+    background: black;
     color: white;
 }
 
@@ -16,7 +16,7 @@ ul {
 }
 
 .bg-steel {
-    background-color: #2d3956;
+    background-color: #003674;
     height: 9vh;
 }
 
@@ -26,17 +26,17 @@ ul {
     align-items: flex-start;
     max-width: 100vw;
     max-height: 91vh;
-    border: 8px solid #131b28;
+    border: 8px solid black;
     align-content: flex-start;
     /* overflow: hidden; */
 }
 
-.total-confirmed {
-    background: #222c45;
-    border: 1px solid #222c45;
+.last-updated {
+    background: #232427;
+    border: 1px solid #232427;
     border-radius: 10px;
     width: 16.8vw;
-    height: 14.5vh;
+    height: 11.5vh;
     margin-bottom: 8px;
     text-align: center;
     margin-right: 8px;
@@ -46,58 +46,121 @@ ul {
 .total-confirmed-stats {
     display: flex;
     flex-flow: column wrap;
-    background: #222c45;
-    border: 1px solid #222c45;
+    background: #232427;
+    border: 1px solid #232427;
     border-radius: 10px;
     width: 16.8vw;
     text-align: center;
     margin-right: 8px;
     justify-content: flex-start;
-    height: calc(76.5vh - 24px);
+    height: calc(79.5vh - 24px);
+    overflow-x: auto;
 }
 
-.total-confirmed-label {
-    height: 10%;
+.middle-column {
+    display: flex;
+    flex-flow: row wrap;
 }
 
-.total-confirmed-table {
-    overflow-y: scroll;
-    height: 90%;
+.total-confirmed {
+    background: #232427;
+    border: 1px solid #232427;
+    border-radius: 10px;
+    width: 16.8vw;
+    height: 11.5vh;
+    margin-bottom: 8px;
+    text-align: center;
+    margin-right: 8px;
+    line-height: 4vh;
 }
 
-.total-confirmed-table::-webkit-scrollbar {
-    width: 10px;
+.total-deaths {
+    background: #232427;
+    border: 1px solid #232427;
+    border-radius: 10px;
+    width: 16.8vw;
+    height: 11.5vh;
+    margin-bottom: 8px;
+    text-align: center;
+    margin-right: 8px;
+    line-height: 4vh;
 }
 
-.total-confirmed-table::-webkit-scrollbar-track {
-    background: #46526f;
+.total-vaccinations {
+    background: #232427;
+    border: 1px solid #232427;
+    border-radius: 10px;
+    width: 16.8vw;
+    height: 11.5vh;
+    margin-bottom: 8px;
+    text-align: center;
+    margin-right: 8px;
+    line-height: 4vh;
+}
+
+#map {
+    height: calc(67.5vh - 32px);
+    width: calc(50.4vw + 16px);
+    margin-right: 8px;
+    flex-grow: 1;
     border-radius: 10px;
 }
 
-.total-confirmed-table::-webkit-scrollbar-thumb {
-    background-color: white;
+.popup .mapboxgl-popup-content {
+    background: #232427;
+}
+
+.popup .mapboxgl-popup-tip {
+    display: none;
+}
+
+.charts-column {
+    background: #232427;
+    width: calc(32.8vw - 48px);
     border-radius: 10px;
+    text-align: center;
+    padding: 1em;
+    height: calc(91vh - 8px);
+    overflow-y: auto;
 }
 
-.total-confirmed-table::-webkit-scrollbar-thumb:hover {
-    background-color: #707070;
+#confirmed-chart {
+    width: 95% !important;
+    height: calc((100% - 2em) / 3) !important;
+    background: #232427 !important;
+    border-radius: 10px;
+    font-size: 2em !important;
+    display: block;
+    margin: auto;
+    margin-bottom: 1em;
 }
 
-.total-confirmed-table li {
-    text-align: left;
-    list-style-type: none;
+#death-chart {
+    width: 95% !important;
+    height: calc((100% - 2em) / 3) !important;
+    background: #232427 !important;
+    border-radius: 10px;
+    font-size: 2em !important;
+    display: block;
+    margin: auto;
+    margin-bottom: 1em;
 }
 
-.total-confirmed-table span {
-    font-weight: bolder;
-    font-size: 1.1vw;
+#vaccination-chart {
+    width: 95% !important;
+    height: calc((100% - 2em) / 3) !important;
+    background: #232427 !important;
+    border-radius: 10px;
+    font-size: 2em !important;
+    display: block;
+    margin: auto;
 }
 
 .trending-news {
-    width: 50vw;
+    width: calc(50.4vw + 16px);
     height: 12vh;
-    background: #222c45;
-    border: 1px solid #222c45;
+    background: #232427;
+    border: 1px solid #232427;
     border-radius: 10px;
     text-align: center;
     margin-bottom: 8px;
@@ -115,12 +178,57 @@ ul {
 
 .trending-items {
     overflow-y: scroll;
-    height: calc(85% - 16px);
+    height: calc(85% - 24px);
     margin-top: 6px;
 }
 
 .trending-news a:hover {
     color: #0058e7;
+}
+
+.total-confirmed-label {
+    height: 10%;
+}
+
+.total-confirmed-table {
+    overflow-y: scroll;
+    height: 90%;
+}
+
+.total-confirmed-table::-webkit-scrollbar {
+    width: 10px;
+}
+
+.total-confirmed-table::-webkit-scrollbar-track {
+    background: rgb(121, 121, 121);
+    border-radius: 10px;
+}
+
+.total-confirmed-table::-webkit-scrollbar-thumb {
+    background-color: white;
+    border-radius: 10px;
+}
+
+.total-confirmed-table::-webkit-scrollbar-thumb:hover {
+    background-color: #4d4d4d;
+}
+
+.total-confirmed-table li {
+    text-align: left;
+    list-style-type: none;
+}
+
+.total-confirmed-table span {
+    font-size: 1em;
+}
+
+.selected-tab {
+    background: rgb(0, 132, 255); 
+    height:100%; 
+    width: 7px; 
+    position:absolute; 
+    left:-16px;
+    display: none
 }
 
 .new-news {
@@ -158,7 +266,7 @@ ul {
 }
 
 .trending-items::-webkit-scrollbar-track {
-    background: #46526f;
+    background: rgb(121, 121, 121);
     border-radius: 10px;
 }
 
@@ -168,7 +276,7 @@ ul {
 }
 
 .trending-items::-webkit-scrollbar-thumb:hover {
-    background-color: #707070;
+    background-color: #4d4d4d;
 
 }
 .new-items::-webkit-scrollbar {
@@ -189,134 +297,6 @@ ul {
     background-color: #707070;
 }
 
-#map {
-    height: calc(67vh - 32px);
-    width: 50vw;
-    margin-right: 8px;
-    flex-grow: 1;
-    border-radius: 10px;
-}
-
-.total-deaths {
-    background: #222c45;
-    border: 1px solid #222c45;
-    border-radius: 10px;
-    width: calc((33.2vw - 40px)/2);
-    height: 56.5vh;
-    text-align: center;
-    margin-bottom: 0.8vh;
-}
-
-.total-deaths-label {
-    height: 20%;
-    line-height: 3vh;
-}
-
-.total-deaths-stats {
-    overflow-y: scroll;
-    height: calc(80% - 20px);
-}
-
-.total-deaths-stats::-webkit-scrollbar {
-    width: 10px;
-}
-
-.total-deaths-stats::-webkit-scrollbar-track {
-    background: #46526f;
-    border-radius: 10px;
-}
-
-.total-deaths-stats::-webkit-scrollbar-thumb {
-    background-color: white;
-    border-radius: 10px;
-}
-
-.total-deaths-stats::-webkit-scrollbar-thumb:hover {
-    background-color: #707070;
-}
-
-.total-deaths-stats li {
-    text-align: left;
-    list-style-type: none;
-}
-
-.total-deaths-stats span {
-    font-weight: bolder;
-    font-size: 1.1vw;
-}
-
-.total-recovered {
-    margin-left: 8px;
-    background: #222c45;
-    border: 1px solid #222c45;
-    border-radius: 10px;
-    width: calc((33.2vw - 40px)/2);
-    height: 56.5vh;
-    text-align: center;
-}
-
-.total-recovered-label {
-    height: 20%;
-    line-height: 3vh;
-}
-
-.total-recovered-stats {
-    overflow-y: scroll;
-    height: calc(80% - 20px);
-}
-
-.total-recovered-stats::-webkit-scrollbar {
-    width: 10px;
-}
-
-.total-recovered-stats::-webkit-scrollbar-track {
-    background: #46526f;
-    border-radius: 10px;
-}
-
-.total-recovered-stats::-webkit-scrollbar-thumb {
-    background-color: white;
-    border-radius: 10px;
-}
-
-.total-recovered-stats::-webkit-scrollbar-thumb:hover {
-    background-color: #707070;
-}
-
-.total-recovered-stats li {
-    text-align: left;
-    list-style-type: none;
-}
-
-.total-recovered-stats span {
-    font-weight: bolder;
-    font-size: 1.1vw;
-}
-
-.unemployment {
-    position: relative;
-    left: calc((33.2vw - 40px)/-2);
-    margin-top: 8px;
-    width: calc(33.2vw - 32px);
-    height: 20vh;
-    background: #222c45;
-    border: 1px solid #222c45;
-    border-radius: 10px;
-    text-align: center;
-    margin-bottom: 8px;
-}
-
-.last-updated {
-    position: relative;
-    left: calc((33.2vw - 40px)/-2);
-    width: calc(33.2vw - 32px);
-    height: calc(14.5vh - 32px);
-    background: #222c45;
-    border: 1px solid #222c45;
-    border-radius: 10px;
-    text-align: center;
-}
-
 #myInput {
     /* background-position: 10px 12px; Position the search icon */
     background-repeat: no-repeat; /* Do not repeat the icon image */
@@ -327,7 +307,7 @@ ul {
     margin-bottom: 12px; /* Add some space below the input */
     outline: none;
     height: 3vh;
-    background-color: #222c45;
+    background-color: #232427;
     color: white;
 }
 
@@ -385,7 +365,7 @@ input::placeholder {
 }
 
 .collapsible {
-    background-color: #222c45;
+    background-color: #232427;
     color: white;
     cursor: pointer;
     width: 100%;
@@ -404,28 +384,17 @@ input::placeholder {
     outline: none;
     border: none;
 }
-  
-.contents {
-    display: none;
-    overflow: hidden;
-    background-color: #2d3956;
-    border-radius: 5px;
-    color: white;
-    font-size: 0.8vw;
-    text-align: center;
-    padding-top: 10px;
-    border-radius: 10px;
-}
 
 #tc-p1 {
-    font-size: 1vw; 
+    font-size: 0.7vw; 
     margin: 0; 
     margin-top: 1vh;
+    font-weight: bold;
 }
 
 #tc-h {
     color: #f4c430; 
-    font-size: 2.3vw; 
+    font-size: 1.5vw; 
     font-weight: bolder; 
     margin-top: -1vh;
 }
@@ -433,66 +402,71 @@ input::placeholder {
 #tc-p2 {
     color: #f4c430; 
     font-weight: bold; 
-    font-size: 1vw; 
+    font-size: 0.7vw; 
     margin-top: -1vh;
 }
 
 #td-p1 {
-    font-size: 1vw; 
+    font-size: 0.7vw; 
     margin: 0; 
-    margin-top: 1.3vh;
+    margin-top: 1vh;
+    font-weight: bold;
 }
 
 #td-h {
-    color: #cf352e; 
-    font-size: 2vw; 
+    color: red; 
+    font-size: 1.5vw; 
     font-weight: bolder;
+    margin-top: -1vh;
 }
 
 #td-p2 {
-    color: #cf352e; 
+    color: red; 
     font-weight: bold; 
-    font-size: 1vw; 
+    font-size: 0.7vw; 
     margin-top: -1vh;
 }
 
 #tr-p1 {
     margin: 0px; 
-    margin-top: 1.3vh; 
-    font-size: 1vw;
+    margin-top: 1vh; 
+    font-size: 0.7vw;
+    font-weight: bold;
 }
 
 #tr-h {
     color: #228b22; 
-    font-size: 2vw; 
+    font-size: 1.5vw; 
     font-weight: bolder;
+    margin-top: -1vh;
 }
 
 #tr-p2 {
     color: #228b22; 
     font-weight: bold; 
-    font-size: 1vw; 
+    font-size: 0.7vw; 
     margin-top: -1vh;
 }
 
 #tcl-p1 {
     color: #c6c6cc; 
     margin-top: 1.5vh; 
-    font-size: 0.9vw;
+    font-size: 0.8em;
 }
 
 #tcl-p2 {
     color: #c6c6cc; 
     margin-top: -14px; 
-    font-size: 0.9vw;
+    font-size: 0.8em;
 }
 
 #myUL-s1 {
-    color: #f4c430;
+    color: white;
 }
 
 #myUL-s2 {
-    font-size: 0.9vw;
+    font-size: 1em;
+    color:#c6c6cc
 }
 
 #trending-p {
@@ -506,37 +480,15 @@ input::placeholder {
     font-size: 0.9vw;
 }
 
-#new-p {
-    color: orange; 
-    font-weight: 700; 
-    margin-top: 10px; 
-    font-size: 0.9vw;
-}
-
-#new-a {
-    font-size: 0.9vw;
-}
-
-#unemployment-h2 {
-    margin-top: 5.2vh; 
-    font-size: 1.8vw;
-}
-
-#unemployment-h1 {
-    color: #cf352e; 
-    margin-top: 15px; 
-    font-size: 2vw;
-}
-
 #updated-p {
     margin-top: 2vh; 
-    font-size: 2vh;
+    font-size: 1.5vh;
 }
 
 #updated-h {
     margin-top: -2vh; 
     color: #b8b8b8; 
-    font-size: 2.5vh;
+    font-size: 2vh;
 }
 
 @media only screen and (max-width: 700px) {
@@ -544,49 +496,123 @@ input::placeholder {
         flex-flow: row wrap;
         justify-content: center;
     }
+
     .bg-steel {
         height: 90px;
     }
+
     .navbar-nav a {
         font-size: 14px;
     }
+
     .navbar-brand {
         font-size: 14px;
     }
-    .content > .total-confirmed {
+
+    .total-confirmed {
         order: 1;
-        width: 100vw;
+        width: 100%;
         margin-right: 0;
         height: 100px;
         line-height: 28px;
     }
+
+    .total-deaths { 
+        order: 2; 
+        width: calc(50% - 4px);
+        height: 100px;
+        margin-bottom: 8px;
+        margin-right: 8px;
+    }
+
+    .total-vaccinations {
+        order: 3;
+        width: calc(50% - 4px);
+        height: 100px;
+        margin-left: 0;
+        margin-bottom: 8px;
+        margin-right: 0px;
+    }
+
+    .total-confirmed-stats {
+        order: 4;
+        width: 100%;
+        margin-right: 0;
+        height: 500px;
+        margin-bottom: 8px;
+    }
+
+    .ajaxify-charts {
+        order: 5;
+    }
+
+    .charts-column {
+        width: 100%;
+    }
+
+    #map {
+        order: 6;
+        width: 100%;
+        margin-right: 0;
+        margin-top: 8px;
+        height: 400px;
+    }
+
+    .trending-news {
+        order: 7;
+        width: 100%;
+        margin-top: 8px;
+        margin-right: 0;
+        height: 250px;
+    }
+
+    .last-updated {
+        order: 8;
+        width: 100%;
+        left: 0;
+        margin-bottom: 8px;
+        height: 70px;
+        margin-right: 0;
+    }
+
     #tc-p1 {
         font-size: 14px;
     }
+
     #tc-h {
         font-size: 24px;
     }
+
     #tc-p2 {
         font-size: 14px;
     }
+
     #td-p1 {
         font-size: 14px;
     }
+
     #td-h {
         font-size: 24px;
     }
+
     #td-p2 {
         font-size: 14px;
+        margin-top: -1.5vh;
     }
+
     #tr-p1 {
         font-size: 14px;
     }
+
     #tr-h {
         font-size: 24px;
     }
+
     #tr-p2 {
         font-size: 14px;
+        margin-top: -1.5vh;
     }
+
     #tcl-p1 {
         font-size: 2vw;
         margin-top: 1vh;
@@ -595,124 +621,35 @@ input::placeholder {
     #tcl-p2 {
         font-size: 2vw;
     }
+
     #myInput {
         height: 30px;
-        font-size: 16px;
+        font-size: 1em;
     }
+    
     #myUL-s1 {
-        color: #f4c430;
-        font-size: 16px;
+        color: white;
+        font-size: 1em;
     }
     
     #myUL-s2 {
-        font-size: 16px;
+        font-size: 1em;
     }
+
     #trending-p {
-        font-size: 16px;
+        font-size: 1em;
     }
+
     #trending-a {
         font-size: 14px;
     }
-    #new-p {
-        font-size: 16px;
-    }
-    #new-a {
-        font-size: 14px;
-    }
-    #unemployment-h2 { 
-        font-size: 18px;
-    }
-    
-    #unemployment-h1 {
-        font-size: 24px;
-    }
+
     #updated-p {
         font-size: 14px;
+        margin-top: 0;
     }
     
     #updated-h {
         font-size: 16px;
-    }
-    
-    .total-confirmed-stats {
-        order: 4;
-        width: 100%;
-        margin-right: 0;
-        height: 500px;
-    }
-    .content > .trending-news {
-        order: 6;
-        width: 100%;
-        margin-top: 8px;
-        margin-right: 0;
-        height: 250px;
-    }
-    .content > .new-news {
-        order: 7;
-        width: 100%;
-        margin-right: 0;
-        margin-bottom: 0;
-        height: 250px;
-    }
-    .content > #map {
-        order: 5;
-        width: 100%;
-        margin-right: 0;
-        margin-top: 8px;
-        height: 400px;
-    }
-    .content > .total-deaths { 
-        order: 2; 
-        max-width: calc((100vw - 40px)/2);
-        width: 100%;
-        height: 100px;
-        margin-bottom: 8px;
-        margin-right: 8px;
-    }
-    .total-deaths-stats {
-        display: none;
-    }
-    .total-deaths-label {
-        line-height: 24px;
-    }
-    .content > .total-recovered {
-        order: 3;
-        max-width: calc((100vw - 40px)/2);
-        width: 100%;
-        height: 100px;
-        margin-left: 0;
-        margin-bottom: 8px;
-    }
-    .total-recovered-stats {
-        display: none
-    }
-    .total-recovered-label {
-        line-height: 24px;
-    }
-    .content > .unemployment {
-        order: 8;
-        width: 100%;
-        left: 0;
-        top: 0;
-        height: 150px;
-    }
-    .content > .last-updated {
-        order: 9;
-        width: 100%;
-        left: 0;
-        margin-bottom: 8px;
-        height: 70px;
-    }
-    .contents {
-        font-size: 2.5vw;
-    }
-    .contents .confirmed { 
-        font-size: 2vw;
-    }
-    .contents .recovered {
-        font-size: 2vw;
-    }
-    .contents .deaths {
-        font-size: 2vw;
     }
 }

@@ -32,7 +32,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 DEBUG = (os.environ.get('DEBUG_VALUE') == 'True')
 # DEBUG = 'True'
 
-ALLOWED_HOSTS = ['coronaviruspandemic.herokuapp.com']
+ALLOWED_HOSTS = ['coronaviruspandemic.herokuapp.com', '127.0.0.1:8000']
 
 
 # Application definition
@@ -157,16 +157,32 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'trending',
         'schedule': crontab(minute=26, hour=5),
     },
-    'get-new': {
-        'task': 'new',
-        'schedule': crontab(minute=26, hour=5),
-    },
-    'get-rate': {
-        'task': 'rate',
-        'schedule': crontab(minute=26, hour=5)
-    },
     'state-stats': {
         'task': 'states',
+        'schedule': crontab(minute=26, hour=5)
+    },
+    'vaccination-stats': {
+        'task': 'vaccinations',
+        'schedule': crontab(minute=26, hour=5)
+    },
+    'global-historical-data': {
+        'task': 'global-historical-data',
+        'schedule': crontab(minute=26, hour=5)
+    },
+    'save-global-historical-data': {
+        'task': 'save-global-historical-data',
+        'schedule': crontab(minute=26, hour=5)
+    },
+    'save-global-vaccination-data': {
+        'task': 'save-global-vaccination-data',
+        'schedule': crontab(minute=26, hour=5)
+    },
+    'save-country-historical-data': {
+        'task': 'save-country-historical-data',
+        'schedule': crontab(minute=26, hour=5)
+    },
+    'save-country-vaccination-data': {
+        'task': 'save-country-vaccination-data',
         'schedule': crontab(minute=26, hour=5)
     }
 }

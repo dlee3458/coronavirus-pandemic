@@ -1,0 +1,24 @@
+{% load humanize %}
+<div class="middle-column">
+    <div class="total-confirmed">
+        <p id="tc-p1">Cases</p>
+        {% for stat in global_stats %}
+            <h1 id="tc-h">{{ stat.total_confirmed|intcomma }}</h1>
+            <p id="tc-p2">+{{ stat.new_confirmed|intcomma }} ({{ stat.confirmed_percentage }}%)</p>
+        {% endfor %}
+    </div>
+    <div class="total-deaths">
+        <p id="td-p1">Deaths</p>
+        {% for stat in global_stats %}
+            <h1 id="td-h">{{ stat.total_death|intcomma }}</h1>
+            <p id="td-p2">+{{ stat.new_death|intcomma }} ({{ stat.death_percentage }}%)</p>
+        {% endfor %}
+    </div>
+    <div class="total-vaccinations">
+        <p id="tr-p1">Vaccine Doses Administered</p>
+        {% for stat in global_stats %}
+            <h1 id="tr-h">{{ stat.vaccination_count|intcomma }}</h1>
+            <p id="tr-p2">+{{ stat.new_vaccination_count|intcomma }} ({{ stat.vaccination_percentage }}%)</p>
+        {% endfor %}
+    </div>
+</div>
